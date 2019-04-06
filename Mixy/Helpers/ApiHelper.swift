@@ -69,7 +69,6 @@ extension MainViewController {
         
         URLSession.shared.dataTask(with: request) {(data, response, error) in
             if error != nil {
-                self.noNetworkAlert()
                 onFailure("Error fetching upcoming Movies: \(String(describing: error))")
                 print("Error fetching upcoming Movies: \(String(describing: error))")
             }  else {
@@ -77,7 +76,7 @@ extension MainViewController {
                     fatalError("Could not get upcomingMoviesResultJson Json Serialized Object")
                 }
                 onComplete(upcomingMoviesResultJson)
-                print("Upcoming MoviesResult Json: \(upcomingMoviesResultJson)")
+                //print("Upcoming MoviesResult Json: \(upcomingMoviesResultJson)")
             }
             
         }.resume()
@@ -131,7 +130,7 @@ extension MainViewController {
                     fatalError("Could not get topRatedMoviesJsonResult Json Serialized Object ")
                 }
                 onComplete(topRatedMoviesJsonResult)
-                //print("Top Rated movies JSon Result: \(topRatedMoviesJsonResult)")
+               // print("Top Rated movies JSon Result: \(topRatedMoviesJsonResult)")
             }
         }.resume()
         

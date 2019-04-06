@@ -81,7 +81,7 @@ extension AboutMovieViewController : UITableViewDelegate, UITableViewDataSource 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let y = -scrollView.contentOffset.y
-        let height = max(y, 0)
+        let height = max(y, 80)
         stretchyHeaderUIImageView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: height)
     }
     

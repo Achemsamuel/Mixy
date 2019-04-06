@@ -7,15 +7,15 @@
 //
 
 import Foundation
+import RealmSwift
 
-
-class MovieItem : NSObject {
+class MovieItem : Object {
     
-    var movieId = 0
-    var movieTitle = ""
-    var releaseDate = ""
-    var posterPath = ""
-    var overview = ""
-    var backdropPath = ""
+    @objc var movieId = 0
+    @objc var movieTitle = ""
+    @objc var releaseDate = ""
+    @objc var posterPath = ""
+    @objc var overview = ""
+    @objc var backdropPath = ""
     
 }

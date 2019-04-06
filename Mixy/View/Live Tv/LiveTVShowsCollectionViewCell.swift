@@ -9,7 +9,7 @@
 import UIKit
 
 class LiveTVShowsCollectionViewCell: UICollectionViewCell {
-        
-    @IBOutlet weak var liveTVShowsImageView: UIImageView!
+    
+    @IBOutlet weak var liveTVImagesView: UIImageView!
     
 }

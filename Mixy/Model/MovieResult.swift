@@ -8,7 +8,9 @@
 
 import Foundation
 
+
 class MovieResult : NSObject {
+    
     
     var pageNum = 0
     var totalPages = 0
@@ -18,6 +20,10 @@ class MovieResult : NSObject {
     var popularMoviesArray = Array<MovieItem>()
     var trendingMoviesArray = Array<MovieItem>()
     var liveTVArray = Array<MovieItem>()
-    var topRatedTVArray = Array<MovieItem>()
+    var topRatedTVArray = Array<MovieItem>() {
+        didSet {
+        
+        }
+    }
     
 }

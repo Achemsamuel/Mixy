@@ -9,6 +9,7 @@
 import UIKit
 import Kingfisher
 import ChameleonFramework
+import RealmSwift
 
 class MainViewController: UIViewController {
     
@@ -24,6 +25,8 @@ class MainViewController: UIViewController {
     let findMoviesSearchController = UISearchController(searchResultsController: nil)
     let moviesResult = MovieResult()
     let movieItem = MovieItem()
+    let realm = try! Realm()
+    let defaults = UserDefaults.standard
     
     
     //Segues
@@ -70,14 +73,26 @@ class MainViewController: UIViewController {
         // Do any additional setup after loading the view.
         mainSearchControllerSetUp()
         getApiKey()
-        
+        //reloadCollectionViews()
         //Movies Json Result Methods
         getGeneralMovieResults()
+        reloadCollectionViews()
         
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+      reloadCollectionViews()
+    }
+    
+    
+    
+    
+   
+    
     override func viewDidAppear(_ animated: Bool) {
-        
+        super.viewDidAppear(false)
+        reloadCollectionViews()
         navigationController?.isNavigationBarHidden = false
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
@@ -85,22 +100,43 @@ class MainViewController: UIViewController {
         
     }
     
-    /*----------------------------------------
-     No Network Alert
-     ----------------------------------------*/
-    
-    func noNetworkAlert () {
-        
-        let noNetworkAlert = UIAlertController(title: "Sorry could not load movie" , message: "please check your internet connection and reload app", preferredStyle: .alert)
-        noNetworkAlert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-        
-        //self.present(noNetworkAlert, animated: true, completion: .reloadData)
-        
-    }
+
+    /*-------------------------
+     @IBOutlets Connections
+    -----------------------*/
+    @IBOutlet weak var upcomingMoviesCollectionView: UICollectionView!
+    @IBOutlet weak var trendingMoviesCollectionView: UICollectionView!
+    @IBOutlet weak var topRatedMoviesCollectionView: UICollectionView!
+    @IBOutlet weak var popularMoviesCollectionView: UICollectionView!
+    @IBOutlet weak var liveTVShowsCollectionView: UICollectionView!
+    @IBOutlet weak var topRatedTVCollectionView: UICollectionView!
     
 
+    func reloadCollectionViews () {
+        upcomingMoviesCollectionView.reloadData()
+        trendingMoviesCollectionView.reloadData()
+        topRatedMoviesCollectionView.reloadData()
+        popularMoviesCollectionView.reloadData()
+        liveTVShowsCollectionView.reloadData()
+        topRatedTVCollectionView.reloadData()
+    }
 }
 
+/*
+ Realm Cache
+ */
+extension MainViewController {
+    
+    func saveArrayCount (arrayCount : MovieItem) {
+        do {
+            try realm.write {
+                realm.add(arrayCount)
+            }
+        } catch {
+            print("Could not save count \(error.localizedDescription)")
+        }
+    }
+}
 
 
 /*-------------------------------------------
@@ -115,26 +151,87 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
         //_ = UserDefaults()
         switch collectionView.tag {
         case 0:
-            return moviesResult.upcomingMoviesArray.count
+            let upcomingMovieArrayCount = moviesResult.upcomingMoviesArray.count
+            self.defaults.set(upcomingMovieArrayCount, forKey: "UpcomingMoviesArrayCount")
+            print("Okay Upcomig count oo: \(moviesResult.upcomingMoviesArray.count)")
+            
+            if upcomingMovieArrayCount != 0 {
+                let cachedUpcomingMovieArrayCount = self.defaults.integer(forKey: "UpcomingMoviesArrayCount")
+                //print("topRatedTVMoviesArrayCount :\(cachedUpcomingMovieArrayCount)")
+                return cachedUpcomingMovieArrayCount
+            } else {
+                //print("Okay Upcomig count oo: \(upcomingMovieArrayCount)")
+                return upcomingMovieArrayCount
+            }
+            
         case 1:
-            return moviesResult.trendingMoviesArray.count
+            let trendingMoviesArrayCount =  moviesResult.trendingMoviesArray.count
+            self.defaults.set(trendingMoviesArrayCount, forKey: "trendingMoviesArrayCount")
+            
+            if trendingMoviesArrayCount != 0 {
+                let cachedTrendingMovieArrayCount = self.defaults.integer(forKey: "trendingMoviesArrayCount")
+                return cachedTrendingMovieArrayCount
+            } else{
+                return trendingMoviesArrayCount
+            }
+            
         case 2:
-            return moviesResult.topMoviesArray.count
+            let topRatedMoviesArrayCount = moviesResult.topMoviesArray.count
+            self.defaults.set(topRatedMoviesArrayCount, forKey: "topRatedMoviesArrayCount")
+            
+            if topRatedMoviesArrayCount != 0 {
+                let cachedTopRatedMoviesArrayCount = self.defaults.integer(forKey: "topRatedMoviesArrayCount")
+                return cachedTopRatedMoviesArrayCount
+            } else{
+                return topRatedMoviesArrayCount
+            }
+            
         case 3:
-            return moviesResult.popularMoviesArray.count
+            let popularMoviesArrayCount = moviesResult.popularMoviesArray.count
+            self.defaults.set(popularMoviesArrayCount, forKey: "popularMoviesArrayCount")
+            
+            if popularMoviesArrayCount != 0 {
+                let cachedpopularMoviesArrayCount = self.defaults.integer(forKey: "popularMoviesArrayCount")
+                return cachedpopularMoviesArrayCount
+            } else {
+                return popularMoviesArrayCount
+            }
+            
         case 4:
-            return moviesResult.liveTVArray.count
+            let liveTVMoviesArrayCount = moviesResult.liveTVArray.count
+            self.defaults.set(liveTVMoviesArrayCount, forKey: "liveTVMoviesArrayCount")
+            
+            if liveTVMoviesArrayCount != 0 {
+                let cachedLiveTVMoviesArrayCount = self.defaults.integer(forKey: "liveTVMoviesArrayCount")
+                return cachedLiveTVMoviesArrayCount
+            } else {
+                return liveTVMoviesArrayCount
+            }
+            
         case 5:
-            return moviesResult.topRatedTVArray.count
+            let topRatedTVMoviesArrayCount = moviesResult.topRatedTVArray.count
+            self.defaults.set(topRatedTVMoviesArrayCount, forKey: "topRatedTVMoviesArrayCount")
+            
+            if topRatedTVMoviesArrayCount != 0 {
+                let cachedTopRatedTVMoviesArrayCount = self.defaults.integer(forKey: "topRatedTVMoviesArrayCount")
+                //print("Top Rated Stuff: \(cachedTopRatedTVMoviesArrayCount)")
+                return cachedTopRatedTVMoviesArrayCount
+            } else {
+                return topRatedTVMoviesArrayCount
+            }
+            
         default:
             return 5
         }
     }
     
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+    
         switch collectionView.tag {
         case 0:
+            
             if let upcomingMoviesCollectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: upcomingCCI, for: indexPath) as? UpcomingMoviesCollectionViewCell {
                 upcomingMoviesCollectionCell.upcomingMoviesImageView.backgroundColor = UIColor.randomFlat
                 
@@ -338,7 +435,7 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
             
         case 4:
             if let liveTVCollectionCell = collectionView.dequeueReusableCell(withReuseIdentifier: liveTVCCI, for: indexPath) as? LiveTVShowsCollectionViewCell {
-                liveTVCollectionCell.liveTVShowsImageView.backgroundColor = UIColor.randomFlat
+                liveTVCollectionCell.liveTVImagesView.backgroundColor = UIColor.randomFlat
                 //
                 //collectionView.reloadItems(at: [indexPath])
 
@@ -346,7 +443,7 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
                 let liveTVItemPath = moviesResult.liveTVArray[indexPath.row]
                 let posterItem = ("https://\(self.imagesUrl)\(self.posterWidth)\(liveTVItemPath.posterPath)")
                 
-                var liveTVImageView = liveTVCollectionCell.liveTVShowsImageView
+                var liveTVImageView = liveTVCollectionCell.liveTVImagesView
                 liveTVImageView?.kf.indicatorType = .activity
                 
                 //Check If File Exists In Cache
@@ -695,6 +792,15 @@ extension MainViewController {
         
     }
     
+    
+}
+
+extension MainViewController : UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        //print("moving")
+        //reloadCollectionViews()
+    }
     
 }
 
